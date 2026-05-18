@@ -8,9 +8,11 @@ from core.config import settings
 from core.exceptions import AppException
 from database.session import engine, Base
 from routes import auth_routes, user_routes, goal_routes, checkin_routes, analytics_routes
+from init_db import seed_data
 
 # Initialize database models (for development, normally handled by Alembic)
 Base.metadata.create_all(bind=engine)
+seed_data()
 
 app = FastAPI(
     title=settings.APP_NAME,
