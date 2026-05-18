@@ -1,101 +1,211 @@
-# ⚛️ AtomQuest: Enterprise Goal Setting & Tracking Portal
+# AtomQuest – Goal Setting & Tracking Portal
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+AtomQuest is a web-based performance and goal tracking platform designed to simplify how employees, managers, and HR teams manage organizational goals and quarterly reviews.
 
-AtomQuest is a premium, enterprise-grade performance management and goal-tracking portal designed for modern organizations. Built with a scalable Next.js frontend and a high-performance FastAPI backend, it provides a seamless workflow for employees to set goals, managers to review progress, and admins to oversee organizational analytics.
+The portal helps:
 
----
+* employees create and track goals
+* managers review approvals and progress
+* admins monitor analytics, escalations, and completion rates
 
-## ✨ Key Features
-
-- **🎯 Goal Management:** Employees can draft, batch-submit, and track up to 8 quarterly goals (weighted up to 100%).
-- **✅ Manager Approvals:** Intuitive dashboard for managers to review, approve, reject, or comment on pending team goals.
-- **📈 Quarterly Check-ins:** Structured self-assessments and manager ratings with automated status recalculations (On Track, At Risk, Behind).
-- **📊 Advanced Analytics:** Organization-wide dashboards featuring Recharts-powered interactive visualizations for completion rates, QoQ trends, and department comparisons.
-- **🔐 Role-Based Access Control (RBAC):** Distinct experiences for `Employee`, `Manager`, and `Admin` users, secured via JWT authentication.
-- **🎨 Premium UI/UX:** Responsive, accessible, and polished interface using Tailwind CSS, Radix UI, and Framer Motion for a true enterprise feel.
+This project was built as part of the AtomQuest Hackathon 2026.
 
 ---
 
-## 🏗️ Architecture
+# Features
 
-AtomQuest follows a decoupled, service-oriented architecture:
+## Employee Module
 
-- **Frontend:** Next.js (App Router), React Hook Form + Zod (Validation), Tailwind CSS (Styling), Recharts (Analytics).
-- **Backend:** FastAPI (Python), SQLAlchemy (ORM), Pydantic (Data Validation), Passlib/Bcrypt (Security).
-- **Database:** SQLite (default for local development) / PostgreSQL (Production).
+* Create and manage quarterly goals
+* Set targets, weightage, and UoM
+* Submit goals for approval
+* Track progress through quarterly check-ins
+* View notifications and goal status
+
+## Manager Module
+
+* Review and approve team goals
+* Edit targets and weightages
+* Add check-in comments and feedback
+* Monitor team progress and pending approvals
+
+## Admin Module
+
+* View organization-wide analytics
+* Monitor escalations and completion rates
+* Access audit logs
+* Manage users and unlock goals
+
+## Analytics Dashboard
+
+* Goal completion metrics
+* Quarterly progress trends
+* Department-wise analytics
+* Team performance insights
+* Interactive charts and KPI cards
 
 ---
 
-## 🚀 Quick Start (Local Development)
+# Tech Stack
 
-### 1. Clone the Repository
+## Frontend
+
+* Next.js
+* TypeScript
+* Tailwind CSS
+* ShadCN UI
+* Recharts
+
+## Backend
+
+* FastAPI
+* SQLAlchemy
+* Pydantic
+* JWT Authentication
+
+## Database
+
+* SQLite (local development)
+* PostgreSQL compatible
+
+---
+
+# Project Structure
+
 ```bash
-git clone https://github.com/your-org/atomquest-portal.git
-cd atomquest-portal
+atomquest-portal/
+│
+├── frontend/
+├── backend/
+├── docs/
+└── architecture/
 ```
 
-### 2. Backend Setup
+---
+
+# Local Setup
+
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/Jyotsna024/atomquest-goal-tracking-portal.git
+cd atomquest-goal-tracking-portal
+```
+
+---
+
+# Backend Setup
+
 ```bash
 cd backend
+
 python -m venv venv
-# Windows: venv\Scripts\activate | Mac/Linux: source venv/bin/activate
+
+# Windows
+venv\\Scripts\\activate
+
+# Install dependencies
 pip install -r requirements.txt
 
-# Run migrations and seed test data
+# Initialize database
 python init_db.py
 
-# Start the FastAPI server
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+# Start backend server
+uvicorn main:app --reload
 ```
-The backend API will be available at `http://localhost:8000/api/v1`.
 
-### 3. Frontend Setup
+Backend runs on:
+
 ```bash
-cd ../frontend
+http://localhost:8000
+```
+
+---
+
+# Frontend Setup
+
+```bash
+cd frontend
+
 npm install
 
-# Start the Next.js development server
 npm run dev
 ```
-The frontend application will be available at `http://localhost:3000`.
+
+Frontend runs on:
+
+```bash
+http://localhost:3000
+```
 
 ---
 
-## 🔐 Test Credentials
+# Demo Credentials
 
-Use the following seeded accounts to test different role experiences:
+## Employee
 
-- **Employee:** `employee@atomquest.com` / `employee123`
-- **Manager:** `manager@atomquest.com` / `manager123`
-- **Admin:** `admin@atomquest.com` / `admin123`
+```text
+employee@atomquest.com
+employee123
+```
 
----
+## Manager
 
-## 📦 Deployment
+```text
+manager@atomquest.com
+manager123
+```
 
-AtomQuest is fully configured for cloud deployment.
+## Admin
 
-### Frontend (Vercel)
-The `vercel.json` file is pre-configured. Simply import the repository into Vercel and it will automatically detect the Next.js framework. Make sure to set the `API_BASE_URL` if not using the proxy rewrite.
-
-### Backend (Render / Railway)
-The `render.yaml` file is included for instant deployment on Render. Ensure you provision a PostgreSQL database and inject the `DATABASE_URL` and `JWT_SECRET` environment variables.
-
----
-
-## 🤝 Hackathon Deliverables Checklist
-
-- [x] Complete Next.js Frontend with responsive UI.
-- [x] Complete FastAPI Backend with integrated SQLite/PostgreSQL.
-- [x] End-to-End JWT Authentication and RBAC.
-- [x] Real-time data fetching using Fetch API interceptors.
-- [x] Seeded database for instant testing.
-- [x] Deployment configurations ready.
+```text
+admin@atomquest.com
+admin123
+```
 
 ---
 
-*Built with ❤️ for the Hackathon.*
+# Core Functionalities Implemented
+
+* Goal creation and approval workflow
+* Role-based authentication
+* Quarterly check-ins
+* Analytics dashboards
+* Notifications system
+* Audit logging
+* Escalation tracking
+* Goal validation rules
+* Responsive enterprise UI
+
+---
+
+# Validation Rules
+
+* Maximum 8 goals per employee
+* Minimum weightage per goal = 10%
+* Total weightage must equal 100%
+
+---
+
+# Deployment
+
+## Frontend
+
+Configured for deployment on Vercel.
+
+## Backend
+
+Configured for deployment on Render/Railway.
+
+---
+
+# Notes
+
+This project was developed for the AtomQuest Hackathon 2026 with a focus on:
+
+* usability
+* workflow clarity
+* responsive UI
+* scalable architecture
+* enterprise-style experience
+
