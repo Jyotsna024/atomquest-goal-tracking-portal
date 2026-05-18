@@ -23,11 +23,13 @@ def list_users(role: Optional[str] = None, department: Optional[str] = None,
     return UserListResponse(users=users, total=total)
 
 
+from uuid import UUID
+
 @router.get("/{user_id}", response_model=UserResponse)
-def get_user(user_id: str, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
+def get_user(user_id: UUID, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     return UserService.get_by_id(db, user_id)
 
 
 @router.patch("/{user_id}", response_model=UserResponse)
-def update_user(user_id: str, data: UserUpdate, db: Session = Depends(get_db), _: User = Depends(get_admin)):
+def update_user(user_id: UUID, data: UserUpdate, db: Session = Depends(get_db), _: User = Depends(get_admin)):
     return UserService.update(db, user_id, data)
