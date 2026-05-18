@@ -27,17 +27,25 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
 
-  const handleDemoLogin = (role: UserRole) => {
-    login(role);
-    if (role === "manager") router.push("/manager");
-    else if (role === "admin") router.push("/admin");
-    else router.push("/employee");
+  const handleDemoLogin = async (role: UserRole) => {
+    try {
+      await login(role);
+      if (role === "manager") router.push("/manager");
+      else if (role === "admin") router.push("/admin");
+      else router.push("/employee");
+    } catch (e) {
+      // login error handled by useAuth
+    }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    login("employee");
-    router.push("/employee");
+    try {
+      await login("employee");
+      router.push("/employee");
+    } catch (e) {
+      // error handled
+    }
   };
 
   return (
