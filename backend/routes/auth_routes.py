@@ -10,11 +10,19 @@ from core.exceptions import UnauthorizedException
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 @router.post("/login", response_model=TokenResponse)
 def login(data: LoginRequest, db: Session = Depends(get_db)):
+    logger.info(f"Login request received for email: {data.email}")
     user = UserService.get_by_email(db, data.email)
     if not user or not verify_password(data.password, user.hashed_password):
+        logger.warning(f"Failed login attempt for email: {data.email}")
         raise UnauthorizedException("Invalid email or password")
+    
+    logger.info(f"Successful login for user: {user.id}")
     token = create_access_token(str(user.id), user.role.value)
     return TokenResponse(access_token=token, user_id=str(user.id), role=user.role.value, name=user.name)
 
