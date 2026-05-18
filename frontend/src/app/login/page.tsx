@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Atom, User, Shield, Settings, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Atom, User, Shield, Settings, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { APP_NAME } from "@/lib/constants";
+import { toast } from "sonner";
 
 const demoRoles: { role: UserRole; label: string; desc: string; icon: React.ReactNode }[] = [
   { role: "employee", label: "Employee", desc: "View & manage your goals", icon: <User className="w-5 h-5" /> },
@@ -21,6 +22,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<string | null>(null);
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotSent, setForgotSent] = useState(false);
@@ -28,23 +31,39 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleDemoLogin = async (role: UserRole) => {
+    setDemoLoading(role);
     try {
       await login(role);
-      if (role === "manager") router.push("/manager");
-      else if (role === "admin") router.push("/admin");
-      else router.push("/employee");
-    } catch (e) {
-      // login error handled by useAuth
+      const target = role === "manager" ? "/manager" : role === "admin" ? "/admin" : "/employee";
+      router.push(target);
+    } catch (e: any) {
+      console.error("[Login] Demo login failed:", e);
+      toast.error(e?.message || "Demo login failed. Please try again.");
+    } finally {
+      setDemoLoading(null);
     }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      toast.error("Please enter both email and password.");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      await login("employee");
-      router.push("/employee");
-    } catch (e) {
-      // error handled
+      await login(email, password);
+      // Determine redirect based on stored role
+      const storedRole = localStorage.getItem("atomquest-role") || "employee";
+      const target = storedRole === "manager" ? "/manager" : storedRole === "admin" ? "/admin" : "/employee";
+      router.push(target);
+    } catch (e: any) {
+      console.error("[Login] Form login failed:", e);
+      toast.error(e?.message || "Invalid email or password.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -132,7 +151,7 @@ export default function LoginPage() {
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <Input id="email" type="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -140,13 +159,15 @@ export default function LoginPage() {
                         <button type="button" onClick={() => setShowForgot(true)} className="text-xs text-primary hover:underline cursor-pointer">Forgot password?</button>
                       </div>
                       <div className="relative">
-                        <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer">
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                       </div>
                     </div>
-                    <Button type="submit" className="w-full">Sign in <ArrowRight className="w-4 h-4 ml-1" /></Button>
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                      {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Signing in...</> : <>Sign in <ArrowRight className="w-4 h-4 ml-1" /></>}
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
@@ -158,9 +179,11 @@ export default function LoginPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   {demoRoles.map((r) => (
-                    <button key={r.role} onClick={() => handleDemoLogin(r.role)}
-                      className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 group cursor-pointer">
-                      <div className="p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors">{r.icon}</div>
+                    <button key={r.role} onClick={() => handleDemoLogin(r.role)} disabled={!!demoLoading}
+                      className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 group cursor-pointer disabled:opacity-50">
+                      <div className="p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors">
+                        {demoLoading === r.role ? <Loader2 className="w-5 h-5 animate-spin" /> : r.icon}
+                      </div>
                       <span className="text-sm font-medium">{r.label}</span>
                       <span className="text-[10px] text-muted-foreground text-center leading-tight">{r.desc}</span>
                     </button>
