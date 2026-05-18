@@ -113,9 +113,16 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def global_exception_handler(request: Request, exc: Exception):
     import logging
     logging.error(f"Unhandled exception: {str(exc)}")
+    origin = request.headers.get("origin")
+    headers = {}
+    if origin in ["http://localhost:3000", "https://atomquest-goal-tracking-portal-gamma.vercel.app"]:
+        headers["Access-Control-Allow-Origin"] = origin
+        headers["Access-Control-Allow-Credentials"] = "true"
+        
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal server error"},
+        headers=headers
     )
 
 # Routers
